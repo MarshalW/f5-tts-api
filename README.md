@@ -30,6 +30,13 @@ volumes:
     driver: local
 ```
 
+构建和运行：
+
+```bash
+docker compose build
+docker compose up -d
+```
+
 文本生成克隆音频：
 
 ```bash
