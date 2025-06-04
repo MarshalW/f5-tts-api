@@ -1,0 +1,32 @@
+services:
+  f5-tts:
+    build: . 
+    container_name: f5-tts-server
+    ports:
+      - "${F5_TTS_SERVER_PORT}:${F5_TTS_SERVER_PORT}"
+    environment:
+      - F5_TTS_SERVER_PORT=${F5_TTS_SERVER_PORT}
+      # 第一次启动时可能需要代理服务 - huggingface 下载模型
+      # - http_proxy=http://myproxy:7890
+      # - https_proxy=http://myproxy:7890
+      # - no_proxy=localhost,127.0.0.1
+    volumes:
+      - f5-tts:/root/.cache/huggingface/hub/
+      # 可覆盖实现自己的参考音频
+      # - ./data/ref.wav:/reference/ref.wav
+      # - ./data/ref.txt:/reference/ref.txt
+      # 可覆盖实现自己的定制逻辑
+      # - ./src/server.py:/app/server.py
+    # entrypoint: ["python", "/app/server.py"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+volumes:
+  f5-tts:
+    external: true
+    name: f5-tts-service_f5-tts
